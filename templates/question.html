@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="POST" action="/questions/{{ question_id }}">
+    <p>{{ question.question }}</p>
+    {% if question.choices %}
+      {% for choice in question.choices %}
+        <label>
+          <input type="radio" name="response" value="{{ choice }}">
+          {{ choice }}
+        </label><br>
+      {% endfor %}
+    {% else %}
+      <textarea name="response"></textarea><br>
+    {% endif %}
+    <button type="submit">Next</button>
+  </form>
+{% endblock %}
