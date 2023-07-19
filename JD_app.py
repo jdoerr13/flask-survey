@@ -9,18 +9,21 @@ app.config['SECRET_KEY'] = "chickenzarecool21837"
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False  
 debug = DebugToolbarExtension(app)
 
-RESPONSES_KEY = "respon"
+RESPONSES_KEY = "responses"
+
 
 @app.route("/")
 def show_survey_start():
     """Select a survey."""
     return render_template("start.html", survey=satisfaction_survey)
 
+
 @app.route("/begin", methods=["POST"])
 def start_survey(): #purpose to 
     """Clear the session of responses."""
     session[RESPONSES_KEY] = []  #make sure to inport session (dict like object) above- it refers to a key in the session dictionary where the responses to the survey questions are stored. By assigning an empty list [] to session[RESPONSES_KEY], the code clears any existing responses for the current session.
     return redirect("/questions/0") #redirect the /begin to /questions/0
+
 
 #HERE EACH QUESTIONS IS HANDLED INDIVIDUALLY 
 @app.route("/questions/<int:question_id>", methods=["GET", "POST"])
@@ -29,7 +32,8 @@ def handle_question(question_id):
 
     # Retrieve the survey and responses from the session
     survey = satisfaction_survey
-    responses = session.get(RESPONSES_KEY)
+    responses = session.get(RESPONSES_KEY) or []
+
 
     # Check if the question ID is valid
     if question_id < 0 or question_id >= len(survey.questions):
@@ -50,6 +54,8 @@ def handle_question(question_id):
         response = request.form.get("response")
         responses.append(response)
         session[RESPONSES_KEY] = responses
+
+        print(session)
 
         # Check if there are more questions
         if question_id + 1 < len(survey.questions):  #STEP 5- don't hard code 5 as the end
